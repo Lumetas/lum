@@ -16,7 +16,7 @@ if __name__ == "__main__":
     if len (sys.argv) > 2:
         domen = sys.argv[2]
     else:
-        domen = 'localhost:8080'
+        domen = 'f0541993.xsph.ru'
 
 if __name__ == "__main__":
     if len (sys.argv) > 3:
