@@ -44,7 +44,7 @@ rek = ':' + rek + ':'
 lili = len(rek)
 rekek = cont[cont.find(rek) + lili:]
 link = rekek.partition(';')[0]
-print('Пакет найден:')
+
 
 fname = 'main.zip'
 print('Получение пакета:')
