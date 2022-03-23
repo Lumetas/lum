@@ -1,12 +1,26 @@
 import requests
 import sys
 import os
-import shutil
+import progressbar
 
-def save_file_from_www(link):
-    filename = link.split('/')[-1]
-    r = requests.get(link, allow_redirects=True)
-    open(filename, 'wb').write(r.content)
+
+def download_file(url):
+    local_filename = 'main.zip'
+    r = requests.get(url, stream=True)
+    f = open(local_filename, 'wb')
+    file_size = int(r.headers['Content-Length'])
+    chunk = 1
+    num_bars = file_size / chunk
+    bar =  progressbar.ProgressBar(maxval=num_bars).start()
+    i = 0
+    for chunk in r.iter_content():
+        f.write(chunk)
+        bar.update(i)
+        i+=1
+    f.close()
+    return
+
+
 
 def char_code(c):
     return c.decode('utf-8')
@@ -44,14 +58,14 @@ rek = ':' + rek + ':'
 lili = len(rek)
 rekek = cont[cont.find(rek) + lili:]
 link = rekek.partition(';')[0]
-
+print('Пакет найден:')
 
 fname = 'main.zip'
 print('Получение пакета:')
 
 
-save_file_from_www(link)
-print('Ок')
+download_file(link)
+
 
 
 
