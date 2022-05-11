@@ -1,3 +1,4 @@
+lumVersion = '1.0'
 from audioop import rms
 import requests
 import sys
@@ -222,7 +223,10 @@ elif sys.argv[1] == 'build':
     os.remove('main.sh')
 
 
-
+elif sys.argv[1] == '--version':
+    print(lumVersion)
+    
+    
 else:
     print('sync or install or remove or req')
     exit()
