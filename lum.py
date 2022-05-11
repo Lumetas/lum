@@ -21,6 +21,20 @@ def download_file(url):
     return
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def sync(url):
     local_filename = '/sync.dd'
     r = requests.get(url, stream=True)
@@ -118,11 +132,14 @@ elif sys.argv[1] == 'install':
     
     
     
-    
-    
-    
-    
-    
+elif sys.argv[1] == 'req': 
+     if len (sys.argv) > 2:
+        print()
+        f = open(sys.argv[2], 'r')
+        cont = f.read()
+        req = cont.split(',')
+        [os.system('sudo lum install '+ i) for i in req]
+        print(req)
     
     
     
@@ -142,6 +159,6 @@ elif sys.argv[1] == 'remove':
     
     
 else:
-    print('sync or install or remove')
+    print('sync or install or remove or req')
     exit()
 
