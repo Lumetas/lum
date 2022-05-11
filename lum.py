@@ -1,8 +1,32 @@
+from audioop import rms
 import requests
 import sys
 import os
 import progressbar
 import os.path
+import zipfile
+def mybackup(arch, folder_list, mode):
+    # Счетчики
+    num = 0
+    num_ignore = 0
+    
+    z = zipfile.ZipFile(arch, mode, zipfile.ZIP_DEFLATED, True)
+    # Получаем папки из списка папок.
+    for add_folder in folder_list:
+        # Список всех файлов и папок в директории add_folder
+        for root, dirs, files in os.walk(add_folder):
+            for file in files:
+                if file in ignore_file:  # Исключаем лишние файлы
+                    print("Исключен! ", str(file))
+                    num_ignore += 1
+                    continue
+                # Создание относительных путей и запись файлов в архив
+                path = os.path.join(root, file)
+                z.write(path)
+                print(num, path)
+                num += 1
+
+
 
 def download_file(url):
     local_filename = 'main.zip'
@@ -155,9 +179,50 @@ elif sys.argv[1] == 'remove':
     
     
     
+elif sys.argv[1] == 'make':
+    print
+    packageName = input('Имя пакета: ')
+    installScript = input('Скрипт установки: ')
+    rmScript = input('Скрипт для удаления: ')
+    makeFile = packageName + ';' + installScript + ';' + rmScript
+    f = open('makefile', 'w')
+    f.write(makeFile)
+    f.close()
     
-    
-    
+elif sys.argv[1] == 'build':
+    print
+    if os.path.exists('makefile') == False:
+        exit('Используйте lum make')
+    f = open('makefile', 'r')
+    cont = f.read()
+    makeData = cont.split(';')
+
+
+    packageName = makeData[0]
+    installScript = makeData[1]
+    rmScript = makeData[2]
+
+
+
+
+
+    main ='sudo chmod +x ' + installScript + ' ; ' + 'sudo sh ' + installScript + ' ; '
+    main = main + 'sudo chmod +x ' + rmScript + ' ; ' + 'sudo mv ' + rmScript + ' /lumRm/' + packageName
+
+
+
+    f = open('main.sh', 'w')
+    f.write(main)
+    f.close()
+
+
+    filePackageName = packageName + '.zip'
+    ignore_file = [filePackageName]
+    mybackup(filePackageName, os.curdir, 'w')
+    os.remove('main.sh')
+
+
+
 else:
     print('sync or install or remove or req')
     exit()
