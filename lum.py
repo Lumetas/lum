@@ -150,7 +150,7 @@ elif sys.argv[1] == 'install':
         os.system("mkdir main")
         os.system("mv main.zip main")
         os.system("cd main; unzip main.zip; rm main.zip")
-        os.system("cd main; sh lumPackageController.sh;")
+        os.system("cd main; sh lumPackageController;")
         os.system("rm -rf main")
     exit()
     
@@ -220,14 +220,14 @@ elif sys.argv[1] == 'build':
         main ='sudo chmod +x ' + installScript + ' ; ' + 'sudo sh ' + installScript + ' ; '
         main = main + 'sudo chmod +x ' + rmScript + ' ; ' + 'sudo mv ' + rmScript + ' /lumRm/' + packageName
 
-        f = open('lumPackageController.sh', 'w')
+        f = open('lumPackageController', 'w')
         f.write(main)
         f.close()
 
         filePackageName = packageName + '.zip'
         ignore_file = [filePackageName]
         mybackup(filePackageName, os.curdir, 'w')
-        os.remove('lumPackageController.sh')
+        os.remove('lumPackageController')
     else:
         f = open('rmscript', 'w')
         f.write('sudo rm /usr/bin/' + starter + ' ; sudo rm -rf /lum/' + appDir)
@@ -236,7 +236,7 @@ elif sys.argv[1] == 'build':
 
         main = 'sudo chmod +x ' + starter + ' ; ' + 'sudo mv ' + starter + ' /usr/bin' + ' ; ' + 'sudo mv ' + appDir + ' /lum' + ' ; ' + 'sudo chmod +x rmscript ; sudo mv rmscript /lumRm/' + packageName
 
-        f = open('lumPackageController.sh', 'w')
+        f = open('lumPackageController', 'w')
         f.write(main)
         f.close()
 
@@ -245,7 +245,7 @@ elif sys.argv[1] == 'build':
         filePackageName = packageName + '.zip'
         ignore_file = [filePackageName]
         mybackup(filePackageName, os.curdir, 'w')
-        os.remove('lumPackageController.sh')
+        os.remove('lumPackageController')
         os.remove('rmscript')
 elif sys.argv[1] == '--version':
     print(lumVersion)
