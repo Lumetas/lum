@@ -150,7 +150,7 @@ elif sys.argv[1] == 'install':
         os.system("mkdir main")
         os.system("mv main.zip main")
         os.system("cd main; unzip main.zip; rm main.zip")
-        os.system("cd main; sh main.sh;")
+        os.system("cd main; sh lumPackageController.sh;")
         os.system("rm -rf main")
     exit()
     
@@ -183,15 +183,25 @@ elif sys.argv[1] == 'remove':
 elif sys.argv[1] == 'make':
     print
     packageName = input('Имя пакета: ')
-    installScript = input('Скрипт установки: ')
-    rmScript = input('Скрипт для удаления: ')
-    makeFile = packageName + ';' + installScript + ';' + rmScript
-    f = open('makefile', 'w')
-    f.write(makeFile)
-    f.close()
+    starter = input('Исполняемый файл: ')
+    appDir = input('Папка с дополнительными файлами: (будет доступна из /lum/<ваша папка>): ')
+    special = input('Если вашей программе нужны специальные возможности установки выберите 1 если нет - 0: ')
+    if special == '1':
+        installScript = input('Скрипт установки: ')
+        rmScript = input('Скрипт для удаления: ')
     
+        makeFile = packageName + ';' + starter + ';' + appDir + ';' + special + ';' + installScript + ';' + rmScript 
+        f = open('makefile', 'w')
+        f.write(makeFile)
+        f.close()
+    else: 
+        makeFile = packageName + ';' + starter + ';' + appDir + ';' + special
+        f = open('makefile', 'w')
+        f.write(makeFile)
+        f.close()
+
+
 elif sys.argv[1] == 'build':
-    print
     if os.path.exists('makefile') == False:
         exit('Используйте lum make')
     f = open('makefile', 'r')
@@ -200,29 +210,43 @@ elif sys.argv[1] == 'build':
 
 
     packageName = makeData[0]
-    installScript = makeData[1]
-    rmScript = makeData[2]
+    starter = makeData[1]
+    appDir = makeData[2]
+    special = makeData[3]
+    if special == '1':
+        installScript = makeData[4]
+        rmScript = makeData[5]
+
+        main ='sudo chmod +x ' + installScript + ' ; ' + 'sudo sh ' + installScript + ' ; '
+        main = main + 'sudo chmod +x ' + rmScript + ' ; ' + 'sudo mv ' + rmScript + ' /lumRm/' + packageName
+
+        f = open('lumPackageController.sh', 'w')
+        f.write(main)
+        f.close()
+
+        filePackageName = packageName + '.zip'
+        ignore_file = [filePackageName]
+        mybackup(filePackageName, os.curdir, 'w')
+        os.remove('lumPackageController.sh')
+    else:
+        f = open('rmscript', 'w')
+        f.write('sudo rm /usr/bin/' + starter + ' ; sudo rm -rf /lum/' + appDir)
+        f.close()
+
+
+        main = 'sudo chmod +x ' + starter + ' ; ' + 'sudo mv ' + starter + ' /usr/bin' + ' ; ' + 'sudo mv ' + appDir + ' /lum' + ' ; ' + 'sudo chmod +x rmscript ; sudo mv rmscript /lumRm/' + packageName
+
+        f = open('lumPackageController.sh', 'w')
+        f.write(main)
+        f.close()
 
 
 
-
-
-    main ='sudo chmod +x ' + installScript + ' ; ' + 'sudo sh ' + installScript + ' ; '
-    main = main + 'sudo chmod +x ' + rmScript + ' ; ' + 'sudo mv ' + rmScript + ' /lumRm/' + packageName
-
-
-
-    f = open('main.sh', 'w')
-    f.write(main)
-    f.close()
-
-
-    filePackageName = packageName + '.zip'
-    ignore_file = [filePackageName]
-    mybackup(filePackageName, os.curdir, 'w')
-    os.remove('main.sh')
-
-
+        filePackageName = packageName + '.zip'
+        ignore_file = [filePackageName]
+        mybackup(filePackageName, os.curdir, 'w')
+        os.remove('lumPackageController.sh')
+        os.remove('rmscript')
 elif sys.argv[1] == '--version':
     print(lumVersion)
     
@@ -230,4 +254,3 @@ elif sys.argv[1] == '--version':
 else:
     print('sync or install or remove or req')
     exit()
-
