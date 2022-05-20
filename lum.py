@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 lumVersion = '1.0'
 from audioop import rms
 import requests
