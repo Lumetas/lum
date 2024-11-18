@@ -225,7 +225,13 @@ func main() {
 
 		url := searchGitHub(os.Args[2])
 		if url != "" {
-			you_want_string := "Do you want to install " + url + "?" + " y/n "
+			config := read_config(get_repo_config(url))
+			you_want_string := ""
+			if config[0] == "source" {
+				you_want_string = "Do you want to install source package " + url + "? In the process, he will execute his commands" + " y/n "
+			} else {
+				you_want_string = "Do you want to install " + url + "?" + " y/n "
+			}
 			fmt.Println(you_want_string)
 			var userInput string
 
@@ -237,7 +243,6 @@ func main() {
 			}
 
 			if userInput == "y" {
-				config := read_config(get_repo_config(url))
 				if config[0] == "bin" {
 					download_file(config[1], strings.Split(url, "/")[4])
 
@@ -258,7 +263,14 @@ func main() {
 	} else if os.Args[1] == "remove" {
 		url := searchGitHub(os.Args[2])
 		if url != "" {
-			you_want_string := "Do you want to remove " + url + "?" + " y/n "
+			config := read_config(get_repo_config(url))
+			you_want_string := ""
+			if config[0] == "source" {
+				you_want_string = "Do you want to remove source package " + url + "? In the process, he will execute his commands" + " y/n "
+			} else {
+				you_want_string = "Do you want to remove " + url + "?" + " y/n "
+			}
+			// you_want_string := "Do you want to remove " + url + "?" + " y/n "
 			fmt.Println(you_want_string)
 			var userInput string
 
@@ -270,7 +282,6 @@ func main() {
 			}
 
 			if userInput == "y" {
-				config := read_config(get_repo_config(url))
 				if config[0] == "bin" {
 					name := strings.Split(url, "/")[4]
 					remove_file(filepath.Join(BIN_DIR, name))
